@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Acceuil
+{% endblock %}
+
+{% block body %}
+
+	<table class="table table-striped">
+			<tr>
+				<th>Id</th>
+				<td>{{ user.id }}</td>
+			</tr>
+			<tr>
+				<th>Nom</th>
+				<td>{{ user.firstname }}</td>
+			</tr>
+			<tr>
+				<th>Prénom</th>
+				<td>{{ user.lastname }}</td>
+			</tr>
+			<tr>
+				<th>Adresse</th>
+				<td>{{ user.adress }}</td>
+			</tr>
+			<tr>
+				<th>Telephone</th>
+				<td>{{ user.telephone }}</td>
+			</tr>
+			<tr>
+				<th>roles</th>
+				<td>
+					%
+					{% for role in user.roles %}
+						{{ role }}
+					{% endfor %}
+				</td>
+			</tr>
+			<tr>
+				<td>Mot de passe</td>
+				<td>{{ user.password }}</td>
+			</tr>
+
+            <tr>
+            <td>
+				<a href="{{ path('app_home') }}" class="btn btn-success">revenir à l'acceuil</a>
+				<a href="{{ path('app_edit', {'id': user.id}) }}" class="btn btn-secondary">edit</a>
+			</td>
+            </tr>
+			
+
+	</table>
+		{% endblock body %}

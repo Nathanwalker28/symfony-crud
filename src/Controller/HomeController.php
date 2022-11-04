@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,25 +24,30 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="app_new", methods={"GET", "POST"})
+     * @Route("/edit/{id}", name="app_edit")
      */
-    public function new(Request $request, UserRepository $userRepository): Response
-    {
-        $user = new User();
-        $form = $this->createForm(UserTupe::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userRepository->add($user, true);
-
-            return $this->redirectToRoute('app_blog_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('Home/new.html.twig', [
-            'user' => $user,
-            'form' => $form,
+    public function edit(UserRepository $user, $id)
+    {   
+        $user = $user->find($id);
+        $form = $this->createForm(UserType::class, $user);
+        return $this->renderForm('Home/edit.html.twig', [
+            "user" => $user,
+            'form' => $form
         ]);
     }
+
+    /**
+     * @Route("/show/{id}", name="app_show")
+     */
+    public function show(UserRepository $user, $id)
+    {   
+        $user = $user->find($id);
+        return $this->render('Home/show.html.twig', [
+            "user" => $user,
+        ]);
+    }
+
+    
 }
 
 

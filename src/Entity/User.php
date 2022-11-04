@@ -36,12 +36,12 @@ class User implements UserInterface
     private $adress;
 
     /**
-     * @ORM\Column(type="integer" , length=100)
+     * @ORM\Column(type="string" , length=100)
      */
     private $telephone;
 
     /**
-     * @ORM\Column(type="string" , length=100)
+     * @ORM\Column(type="array" , length=100)
      */
     private $roles;
 
@@ -93,12 +93,12 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getTelephone(): ?int
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
 
-    public function setTelephone(int $telephone): self
+    public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
 
@@ -109,7 +109,7 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles(): ?array
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
@@ -118,7 +118,7 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(?array $roles): self
     {
         $this->roles = $roles;
 
