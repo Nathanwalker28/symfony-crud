@@ -3,12 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\BlogRepository;
+use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Entity(repositoryClass=BlogRepository::class)
+ * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity(fields={"firstname"}, message="There is already an account with this firstname")
  */
 class User implements UserInterface
@@ -41,16 +41,10 @@ class User implements UserInterface
     private $telephone;
 
     /**
-     * @ORM\Column(type="array" , length=100)
-     */
-    private $roles;
-
-    /**
      * @ORM\Column(type="string" , length=100)
      */
     private $password;
 
-    
 
     public function getId(): ?int
     {
@@ -109,26 +103,15 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): ?array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(?array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
+    public function getRoles()
+    {   
+        return ['ROLE_USER'];   
     }
 
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -166,7 +149,7 @@ class User implements UserInterface
      * @deprecated since Symfony 5.3, use getUserIdentifier() instead
      */
     public function getUsername(){
-
+        return $this->email;
     }
 }
 

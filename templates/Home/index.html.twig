@@ -5,6 +5,7 @@
 {% block body %}
 
 <table class="table table-striped">
+    <a href="{{ path('app_create') }}" class="btn btn-primary my-5">Créer un nouveau utilisateur</a>
         <thead>
             <tr>
                 <th>Id</th>
@@ -12,8 +13,9 @@
                 <th>Prénom</th>
                 <th>Adresse</th>
                 <th>Telephone</th>
-                <th>roles</th>
+                <th>Roles</th>
                 <th>Mot de passe</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>

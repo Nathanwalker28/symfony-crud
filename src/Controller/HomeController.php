@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Form\UserType;
+use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -26,13 +28,22 @@ class HomeController extends AbstractController
     /**
      * @Route("/edit/{id}", name="app_edit")
      */
-    public function edit(UserRepository $user, $id)
+    public function edit(UserRepository $user, $id, EntityManagerInterface $manager, Request $request)
     {   
         $user = $user->find($id);
+        
         $form = $this->createForm(UserType::class, $user);
-        return $this->renderForm('Home/edit.html.twig', [
+        $form->handleRequest($request);
+        
+        if( $form->isSubmitted() && $form->isValid() ) {
+            $manager->persist($user);
+            $manager->flush();
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render('Home/edit.html.twig', [
             "user" => $user,
-            'form' => $form
+            'form' => $form->createView()
         ]);
     }
 
@@ -46,6 +57,28 @@ class HomeController extends AbstractController
             "user" => $user,
         ]);
     }
+
+
+    /**
+     * @Route("/new", name="app_create")
+     */
+    public function new(Request $request, EntityManagerInterface $manager)
+    {   
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if( $form->isSubmitted() && $form->isValid() ) {
+            $manager->persist($user);
+            $manager->flush();
+
+            return $this->redirectToRoute('app_home');
+        }
+        return $this->render('Home/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
 
     
 }
