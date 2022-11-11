@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -17,6 +18,7 @@ class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="app_home")
+     * @IsGranted("ROLE_USER")
      */
     public function index(UserRepository $user)
     {   
@@ -28,6 +30,7 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/edit/{id}", name="app_edit")
+     * @IsGranted("ROLE_USER")
      */
     public function edit(UserRepository $user, $id, EntityManagerInterface $manager, Request $request, UserPasswordHasherInterface $passwordHasher)
     {   
@@ -52,6 +55,7 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/show/{id}", name="app_show")
+     * @IsGranted("ROLE_USER")
      */
     public function show(UserRepository $user, $id)
     {   
@@ -64,6 +68,7 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/new", name="app_create")
+     * @IsGranted("ROLE_USER")
      */
     public function new(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher)
     {   
@@ -79,7 +84,7 @@ class HomeController extends AbstractController
             $manager->persist($user);
             $manager->flush();
 
-            $this->addFlash('success', "modification enregister avec succès");
+            
 
             return $this->redirectToRoute('app_login');
         }
@@ -90,6 +95,7 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/delete/{id}", name="app_delete")
+     * @IsGranted("ROLE_USER")
      */
     public function delete(Request $request, User $user, $id, UserRepository $userRepository): Response
     {   
