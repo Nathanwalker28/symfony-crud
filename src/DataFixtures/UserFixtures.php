@@ -16,7 +16,6 @@ class UserFixtures extends Fixture
                 ->setFirstname("prénom n° $i")
                 ->setAdress("adresse n° $i")
                 ->setTelephone("numero n° $i")
-                ->setRoles(["user" => "roles n° $i"])
                 ->setPassword("mot de passe n° $i");
             
             $manager->persist($user);

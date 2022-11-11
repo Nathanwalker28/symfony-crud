@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
+use Assert\Length;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity(fields={"firstname"}, message="There is already an account with this firstname")
+ * @UniqueEntity(fields={"email"}, message="Ce compte existe déja")
  */
 class User implements UserInterface
 {
@@ -21,30 +23,51 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message = "Veuillez remplir votre nom de famille !")
      */
     private $lastname;
 
     /**
-     * @ORM\Column(type="string" , length=255)
-     */
-    private $adress;
-
-    /**
      * @ORM\Column(type="string" , length=100)
+     * @Assert\Length(
+     *       min = 10, 
+     *        max = 20,
+     *          minMessage = "Le numéro de téléphone ne doit pas être vide")
+     *          maxMessage = "Le numéro de téléphone ne doit pas dépasser 20 caractère")
      */
     private $telephone;
 
     /**
+     * @ORM\Column(type="string" , length=255)
+     * @Assert\Length(min = 10, minMessage = "Veuillez renseigner votre adresse")
+     */
+    private $adress;
+
+    /**
+     * @ORM\Column(type="string" , length=255)
+     * @Assert\Email(message = "Veuillez renseigner un email valide")
+     */
+    private $email;
+
+    /**
      * @ORM\Column(type="string" , length=100)
+     * @Assert\NotBlank(message = "Le mot de passe ne doit pas être vide")
      */
     private $password;
 
+        
+    /**
+     * passwordConfirm
+     *
+     * @Assert\EqualTo(propertyPath="password", message="Veuillez confimer votre mot de passe !")
+     */
+    public $passwordConfirm;
 
     public function getId(): ?int
     {
@@ -100,6 +123,17 @@ class User implements UserInterface
     }
 
 
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+        return $this;
+    }
+
     /**
      * @see UserInterface
      */
@@ -116,12 +150,15 @@ class User implements UserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+
+
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
-
         return $this;
     }
+
+
 
     /**
      * Returning a salt is only needed, if you are not using a modern
@@ -146,9 +183,9 @@ class User implements UserInterface
     /**
      * @return string
      *
-     * @deprecated since Symfony 5.3, use getUserIdentifier() instead
      */
-    public function getUsername(){
+    public function getUsername()
+    {
         return $this->email;
     }
 }

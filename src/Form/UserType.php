@@ -6,6 +6,7 @@ use App\Entity\User;
 use Doctrine\DBAL\Types\IntegerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType as TypeIntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,7 +19,8 @@ class UserType extends AbstractType
     {
         $builder
             ->add('firstname', TextType::class, [
-                'label' => 'Prénom'
+                'label' => 'Prénom',
+                'required' => false
             ])
             ->add('lastname', TextType::class, [
                 'label' => 'Nom'
@@ -26,11 +28,17 @@ class UserType extends AbstractType
             ->add('adress', TextType::class, [
                 'label' => 'Adresse'
             ])
-            ->add('telephone', TypeIntegerType::class, [
+            ->add('email', EmailType::class, [
+                'label' => 'Adresse email'
+            ])
+            ->add('telephone', TextType::class, [
                 'label' => 'Numéro de téléphone'
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe'
+            ])
+            ->add('passwordConfirm', PasswordType::class, [
+                'label' => 'Confirmation de mot de passe'
             ])
         ;
     }

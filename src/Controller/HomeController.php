@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class HomeController extends AbstractController
 {
@@ -28,7 +29,7 @@ class HomeController extends AbstractController
     /**
      * @Route("/edit/{id}", name="app_edit")
      */
-    public function edit(UserRepository $user, $id, EntityManagerInterface $manager, Request $request)
+    public function edit(UserRepository $user, $id, EntityManagerInterface $manager, Request $request, UserPasswordHasherInterface $passwordHasher)
     {   
         $user = $user->find($id);
         
@@ -36,6 +37,8 @@ class HomeController extends AbstractController
         $form->handleRequest($request);
         
         if( $form->isSubmitted() && $form->isValid() ) {
+            $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+
             $manager->persist($user);
             $manager->flush();
             return $this->redirectToRoute('app_home');
@@ -62,23 +65,40 @@ class HomeController extends AbstractController
     /**
      * @Route("/new", name="app_create")
      */
-    public function new(Request $request, EntityManagerInterface $manager)
+    public function new(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher)
     {   
         $user = new User();
+        
+
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if( $form->isSubmitted() && $form->isValid() ) {
+            $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
+
             $manager->persist($user);
             $manager->flush();
 
-            return $this->redirectToRoute('app_home');
+            $this->addFlash('success', "modification enregister avec succès");
+
+            return $this->redirectToRoute('app_login');
         }
         return $this->render('Home/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
+    /**
+     * @Route("/delete/{id}", name="app_delete")
+     */
+    public function delete(Request $request, User $user, $id, UserRepository $userRepository): Response
+    {   
+        if($this->isCsrfTokenValid('delete'.$user->getId(), $request->get('_token'))){
+            $userRepository->remove($user, true);
+        }
+        return $this->redirectToRoute('app_home');
+        
+    }
 
     
 }

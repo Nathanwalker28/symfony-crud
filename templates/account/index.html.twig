@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AccountController!
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+
+		{% for label, messages in app.flashes(['success', 'warning']) %}
+			{% for message in messages %}
+				<div class="alert alert-dismissible alert-{{label}} my-3">
+					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+					<div>{{ message }} </div>
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		<div class="row my-5">
+			<div class="col-md-8">
+				<img src="https://via.placeholder.com/200" alt="pdp" class="rounded-circle mb-3">
+			</div>
+			<h1>{{ user.lastname |capitalize  ~ ' ' ~ user.firstname | capitalize}}</h1>
+			<hr>
+			<table>
+				<tr>
+					<th>Téléphone :</th>
+					<td>{{ user.telephone }}</td>
+				</tr>
+
+				<tr>
+					<th>Adresse :</th>
+					<td>{{ user.adress }}</td>
+				</tr>
+
+				<tr>
+					<th>Adresse email :</th>
+					<td>{{ user.email }}</td>
+				</tr>
+			</table>
+			<hr>
+
+			<a href="{{ path('app_account_edit') }}" class="btn btn-dark">Editer le profil</a>
+		</div>
+
+	</div>
+{% endblock %}
