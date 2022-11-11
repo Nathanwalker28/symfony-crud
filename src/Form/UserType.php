@@ -5,13 +5,16 @@ namespace App\Form;
 use App\Entity\User;
 use Doctrine\DBAL\Types\IntegerType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType as TypeIntegerType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType as TypeIntegerType;
+
 
 class UserType extends AbstractType
 {
@@ -33,6 +36,19 @@ class UserType extends AbstractType
             ])
             ->add('telephone', TextType::class, [
                 'label' => 'Numéro de téléphone'
+            ])
+            ->add('url_picture', FileType::class, [
+                'label' => 'Photo de profil',
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/*',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez inséré une image jpg/jpeg/png/gif',
+                    ])
+                ],
+                'data_class' => null
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe'

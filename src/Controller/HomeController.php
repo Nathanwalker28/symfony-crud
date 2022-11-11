@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,7 +33,7 @@ class HomeController extends AbstractController
      * @Route("/edit/{id}", name="app_edit")
      * @IsGranted("ROLE_USER")
      */
-    public function edit(UserRepository $user, $id, EntityManagerInterface $manager, Request $request, UserPasswordHasherInterface $passwordHasher)
+    public function edit(UserRepository $user, $id, EntityManagerInterface $manager, Request $request, UserPasswordHasherInterface $passwordHasher, FileUploader $fileUploader)
     {   
         $user = $user->find($id);
         
@@ -68,9 +69,9 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/new", name="app_create")
-     * @IsGranted("ROLE_USER")
+     * 
      */
-    public function new(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher)
+    public function new(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher, FileUploader $fileUploader)
     {   
         $user = new User();
         
@@ -79,6 +80,15 @@ class HomeController extends AbstractController
         $form->handleRequest($request);
 
         if( $form->isSubmitted() && $form->isValid() ) {
+            
+            $url_picture = $form->get('url_picture')->getData();
+            
+            if($url_picture) {
+                $url_picture_name = $fileUploader->upload($url_picture);
+
+                $user->setUrlPicture($url_picture_name);
+            }
+
             $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             $manager->persist($user);

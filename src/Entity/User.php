@@ -36,9 +36,9 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string" , length=100)
      * @Assert\Length(
-     *       min = 10, 
-     *        max = 20,
-     *          minMessage = "Le numéro de téléphone ne doit pas être vide")
+     *          min = 10, 
+     *          max = 20,
+     *          minMessage = "Le numéro de téléphone ne doit pas être vide",
      *          maxMessage = "Le numéro de téléphone ne doit pas dépasser 20 caractère")
      */
     private $telephone;
@@ -68,6 +68,11 @@ class User implements UserInterface
      * @Assert\EqualTo(propertyPath="password", message="Veuillez confimer votre mot de passe !")
      */
     public $passwordConfirm;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $url_picture;
 
     public function getId(): ?int
     {
@@ -188,5 +193,19 @@ class User implements UserInterface
     {
         return $this->email;
     }
+
+    public function getUrlPicture(): ?string
+    {
+        return $this->url_picture;
+    }
+
+    public function setUrlPicture(?string $url_picture): self
+    {
+        $this->url_picture = $url_picture;
+
+        return $this;
+    }
+
+    
 }
 

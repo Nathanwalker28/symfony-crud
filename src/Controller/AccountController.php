@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\UserType;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AccountController extends AbstractController
 {
     /**
+     * afficher le profile de l'utilisateur
+     * 
      * @Route("/profil", name="app_account")
      * @IsGranted("ROLE_USER")
      * 
@@ -26,10 +29,12 @@ class AccountController extends AbstractController
         ]);
     }
     /**
+     * modifier son profil
+     * 
      * @Route("/profil/edit/", name="app_account_edit")
      * @IsGranted("ROLE_USER")
      */
-    public function edit(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher): Response
+    public function edit(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher, FileUploader $fileUploader): Response
     {
         $user = $this->getUser();
 
@@ -38,6 +43,14 @@ class AccountController extends AbstractController
 
         if( $form->isSubmitted() && $form->isValid()) 
         {
+            $url_picture = $form->get('url_picture')->getData();
+            
+            if($url_picture) {
+                $url_picture_name = $fileUploader->upload($url_picture);
+
+                $user->setUrlPicture($url_picture_name);
+            }
+
             $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             $manager->persist($user);
